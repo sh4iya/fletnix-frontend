@@ -1,0 +1,11 @@
+@import '../login/login.css';
+
+.switch {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.switch a {
+  color: #e50914;
+  text-decoration: none;
+}

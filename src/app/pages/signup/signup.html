@@ -1,0 +1,17 @@
+<div class="login-wrapper">
+    <div class="login-container">
+
+         <h1>FLETNIX</h1>
+         <p>Create your account</p>
+
+         <input type="text" placeholder="Full Name" [(ngModel)]="fullName" />
+         <input type="email" placeholder="Email" [(ngModel)]="email"/>
+         <input type="password" placeholder="Password" [(ngModel)]="password"/>
+         <input type="number" placeholder="Age" [(ngModel)]="age"/>
+        
+         <button (click)="signup()">Sign Up</button>
+
+         <p class="switch">Already have an account? 
+            <a routerLink="/login">Login</a></p>
+    </div>
+</div>

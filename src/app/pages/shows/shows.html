@@ -1,0 +1,82 @@
+<div class="app-wrapper">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="logo">Fletnix</div>
+
+    <div class="controls">
+      <input
+        type="text"
+        placeholder="Search movies, shows..."
+        [(ngModel)]="searchText"
+        (ngModelChange)="applyFilters()"
+      />
+
+      <select
+        [(ngModel)]="selectedType"
+        (ngModelChange)="applyFilters()"
+      >
+        <option value="Movie">Movies</option>
+        <option value="TV Show">TV Shows</option>
+      </select>
+    </div>
+
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </header>
+
+  <div
+  class="empty-state"
+  *ngIf="filteredShows.length === 0 && !hasInteracted"
+>
+  <h2>🎬 Discover something to watch</h2>
+  <p>Start typing or select a category to see movies & TV shows.</p>
+</div>
+
+
+  <!-- GRID -->
+  <div class="grid">
+    <div
+      class="card"
+      *ngFor="let show of paginatedShows"
+      (click)="openDetails(show)"
+    >
+      <div class="card-accent"></div>
+
+      <h3>{{ show.title }}</h3>
+      <p>{{ show.desc }}</p>
+      <span class="badge">{{ show.type }}</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="pagination" *ngIf="totalPages > 1">
+  <button (click)="prevPage()" [disabled]="currentPage === 1">
+    ⬅ Prev
+  </button>
+
+  <span>Page {{ currentPage }} of {{ totalPages }}</span>
+
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages">
+    Next ➡
+  </button>
+</div>
+
+
+<!-- DETAILS MODAL -->
+<div class="overlay" *ngIf="selectedShow" (click)="closeDetails()"></div>
+
+<div class="modal" *ngIf="selectedShow">
+  <h2>{{ selectedShow.title }}</h2>
+
+  <p><b>Type:</b> {{ selectedShow.type }}</p>
+  <p><b>Director:</b> {{ selectedShow.director || 'N/A' }}</p>
+  <p><b>Country:</b> {{ selectedShow.country }}</p>
+  <p><b>Release Year:</b> {{ selectedShow.release_year }}</p>
+  <p><b>Rating:</b> {{ selectedShow.rating }}</p>
+  <p><b>Duration:</b> {{ selectedShow.duration }}</p>
+  <p><b>Genre:</b> {{ selectedShow.listed_in }}</p>
+  <p class="desc">{{ selectedShow.description }}</p>
+
+  <button (click)="closeDetails()">Close</button>
+</div>

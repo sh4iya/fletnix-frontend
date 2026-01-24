@@ -1,0 +1,410 @@
+
+.app-wrapper {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #1a1a1a, #000);
+  color: #fff;
+  padding-bottom: 40px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #e50914;
+  text-transform: uppercase;
+}
+
+.search-wrapper {
+  flex: 1;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 30px;
+  border: none;
+  outline: none;
+  background: #1f1f1f;
+  color: white;
+  font-size: 15px;
+}
+
+.logout-btn {
+  margin-left: auto;   
+  background: #e50914;
+  border: none;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* FILTER */
+.filter-bar {
+  padding: 16px 24px;
+}
+
+.filter-bar select {
+  padding: 10px 14px;
+  border-radius: 20px;
+  background: #1c1c1c;
+  color: white;
+  border: none;
+  outline: none;
+}
+
+/* TITLE */
+.page-title {
+  padding: 0 24px 20px;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* GRID */
+.grid {
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 24px;
+}
+
+/* CARD */
+.card {
+  position: relative;
+ background:
+    radial-gradient(
+      circle at top left,
+      rgba(255,255,255,0.08),
+      rgba(0,0,0,0.9)
+    );
+  border-radius: 16px;
+  padding: 20px;
+  min-height: 170px;
+   box-shadow:
+    0 8px 25px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 20px 50px rgba(0,0,0,0.8),
+    0 0 0 1px rgba(229,9,20,0.25);
+}
+
+/* ACCENT */
+.card-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, #e50914, #ff6a00);
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 0 10px rgba(229,9,20,0.6);
+}
+
+/* TEXT */
+.card h3 {
+  margin: 18px 0 8px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.card:hover h3 {
+  text-shadow: 0 0 12px rgba(255,255,255,0.15);
+}
+
+.card p {
+  font-size: 14px;
+  color: #bdbdbd;
+  line-height: 1.4;
+}
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  background: #2a2a2a;
+  color: #ddd;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;              
+  max-width: 600px;
+}
+
+.controls input {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 30px;
+  border: none;
+  background: #1f1f1f;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+.controls select {
+  padding: 12px 16px;
+  border-radius: 30px;
+  background: #1f1f1f;
+  color: white;
+  border: none;
+  outline: none;
+  min-width: 120px;
+  cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 20;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, #1c1c1c, #111);
+  padding: 30px;
+  border-radius: 16px;
+  width: 420px;
+  z-index: 30;
+  animation: pop 0.3s ease;
+}
+
+.modal h2 {
+  margin-bottom: 10px;
+}
+
+.modal p {
+  color: #bdbdbd;
+  margin-bottom: 16px;
+}
+
+.modal-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.modal button {
+  background: #e50914;
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+@keyframes pop {
+  from {
+    transform: translate(-50%, -60%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #121212;
+  color: white;
+  padding: 24px;
+  width: 420px;
+  border-radius: 14px;
+  z-index: 10;
+}
+
+.modal h2 {
+  margin-bottom: 12px;
+}
+
+.modal .desc {
+  margin-top: 12px;
+  color: #ccc;
+}
+
+.modal button {
+  margin-top: 16px;
+  background: red;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.card.locked {
+  opacity: 0.4;
+  pointer-events: auto;
+  position: relative;
+}
+
+.card.locked::after {
+  content: '🔒 18+';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
+  background: rgba(0,0,0,0.7);
+  padding: 10px 18px;
+  border-radius: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  margin-top: 80px;
+  color: #aaa;
+}
+
+.empty-state h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.empty-state p {
+  font-size: 14px;
+}
+
+
+.app-wrapper {
+  min-height: 100vh;
+  background:
+    linear-gradient(
+      rgba(15, 10, 30, 0.75),
+      rgba(10, 5, 20, 0.9)
+    ),
+    url('/assets/show-bg.jpg');
+
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  color: #fff;
+}
+
+
+.navbar {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(180, 120, 255, 0.2);
+}
+
+
+.card {
+  background: rgba(20, 15, 35, 0.85);
+  border: 1px solid rgba(180, 120, 255, 0.15);
+  border-radius: 14px;
+  padding: 16px;
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(180, 120, 255, 0.25);
+}
+
+.empty-state {
+  text-align: center;
+  margin-top: 120px;
+  color: #d6c8ff;
+}
+
+.empty-state h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  opacity: 0.8;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin: 40px 0;
+  color: white;
+}
+
+.pagination button {
+  background: rgba(180, 120, 255, 0.2);
+  border: 1px solid #b874ff;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: rgba(180, 120, 255, 0.4);
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

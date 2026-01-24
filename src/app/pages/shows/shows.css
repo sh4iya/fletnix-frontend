@@ -318,7 +318,7 @@
       rgba(15, 10, 30, 0.75),
       rgba(10, 5, 20, 0.9)
     ),
-    url('/assets/show-bg.jpg');
+    url('/assets/assets/show-bg.jpg');
 
   background-size: cover;
   background-position: center;

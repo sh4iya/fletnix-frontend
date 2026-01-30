@@ -12,7 +12,6 @@ import { Router } from '@angular/router';
   imports: [CommonModule, FormsModule],
   templateUrl: './shows.html',
   styleUrl: './shows.css',
-  providers: [ShowsService]
 })
 export class Shows implements OnInit {
 
@@ -28,63 +27,66 @@ export class Shows implements OnInit {
   // Pagination
   currentPage = 1;
   itemsPerPage = 15;
+  totalPages = 0;
 
   constructor(private showsService: ShowsService,private router: Router) {}
 
   ngOnInit() {
-    this.showsService.getShows().subscribe({
-      next: (data) => {
-        console.log('SHOWS RECEIVED:', data);
+    this.loadShows();
+  }
 
-        this.shows = data;
-        this.filteredShows = [...this.shows];
-        this.applyFilters();
+  loadShows() {
+  this.showsService
+    .getShows(this.currentPage, this.itemsPerPage)
+    .subscribe({
+      next: (res: any) => {
+        // backend pagination response
+       this.shows = Array.isArray(res.data) ? res.data : [];
+       this.filteredShows = [...this.shows];
+
+        // 🔥 THIS WAS MISSING
+        this.totalPages = res.totalPages;
       },
       error: (err) => {
         console.error('Error fetching shows', err);
+        this.shows = [];
+        this.filteredShows = [];
+        this.totalPages = 0;
       }
     });
-  }
+}
+
 
   applyFilters() {
   const search = this.searchText.trim().toLowerCase();
 
   this.filteredShows = this.shows.filter(show => {
     const matchesTitle =
-      search === '' || show.title?.toLowerCase().includes(search);
+      !search || show.title?.toLowerCase().includes(search);
 
     const matchesCast =
-      search === '' || show.cast?.toLowerCase().includes(search);
+      !search || show.cast?.toLowerCase().includes(search);
 
     const matchesType =
-      this.selectedType === '' || show.type === this.selectedType;
+      !this.selectedType || show.type === this.selectedType;
 
     return (matchesTitle || matchesCast) && matchesType;
   });
-
   this.currentPage = 1;
   this.hasInteracted = true;
 }
 
- get paginatedShows() {
-    const start = (this.currentPage - 1) * this.itemsPerPage;
-    const end = start + this.itemsPerPage;
-    return this.filteredShows.slice(start, end);
-  }
-
-  get totalPages() {
-    return Math.ceil(this.filteredShows.length / this.itemsPerPage);
-  }
-
-  nextPage() {
+ nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.loadShows();
     }
   }
 
   prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.loadShows();
     }
   }
 

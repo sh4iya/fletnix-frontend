@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { getToken } from './storage.util';
 import { environment } from '../../environments/environment';
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,15 +13,18 @@ export class ShowsService {
 
   constructor(private http: HttpClient) {}
 
-  getShows() {
-    const token = getToken();
+  getShows(page: number, limit: number) {
+  const token = getToken();
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
 
-    console.log('SENDING TOKEN:', token);
+  return this.http.get<any>(
+    `${this.API}?page=${page}&limit=${limit}`,
+    { headers }
+  );
+}
 
-    return this.http.get<any[]>(this.API, { headers });
-  }
+
 }

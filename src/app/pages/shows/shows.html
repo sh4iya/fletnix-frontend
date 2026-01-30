@@ -37,7 +37,8 @@
   <div class="grid">
     <div
       class="card"
-      *ngFor="let show of paginatedShows"
+      *ngFor="let show of filteredShows"
+
       (click)="openDetails(show)"
     >
       <div class="card-accent"></div>

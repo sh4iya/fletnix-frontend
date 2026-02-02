@@ -40,24 +40,36 @@ export class Shows implements OnInit {
     .getShows(this.currentPage, this.itemsPerPage)
     .subscribe({
       next: (res: any) => {
-        // backend pagination response
-       this.shows = Array.isArray(res.data) ? res.data : [];
-       this.filteredShows = [...this.shows];
+        console.log("API RES:", res);
 
-        // 🔥 THIS WAS MISSING
-        this.totalPages = res.totalPages;
+        if (Array.isArray(res?.data)) {
+          this.shows = res.data;
+        } else {
+          console.error("Invalid shows data", res);
+          this.shows = [];
+        }
+
+        this.filteredShows = [...this.shows];
+        this.totalPages = res?.totalPages || 1;
       },
+
       error: (err) => {
         console.error('Error fetching shows', err);
         this.shows = [];
         this.filteredShows = [];
-        this.totalPages = 0;
+        this.totalPages = 1;
       }
     });
 }
 
 
   applyFilters() {
+  if (!Array.isArray(this.shows)) {
+    console.warn("Shows not ready yet");
+    this.filteredShows = [];
+    return;
+  }
+
   const search = this.searchText.trim().toLowerCase();
 
   this.filteredShows = this.shows.filter(show => {
@@ -72,9 +84,11 @@ export class Shows implements OnInit {
 
     return (matchesTitle || matchesCast) && matchesType;
   });
+
   this.currentPage = 1;
   this.hasInteracted = true;
 }
+
 
  nextPage() {
     if (this.currentPage < this.totalPages) {

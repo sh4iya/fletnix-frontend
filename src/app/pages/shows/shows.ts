@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { getToken, removeToken } from '../../services/storage.util';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 
 @Component({
@@ -16,11 +18,14 @@ import { Router } from '@angular/router';
 export class Shows implements OnInit {
 
   searchText = '';
-  selectedType = 'Movie';
+  selectedType = 'All';
   hasInteracted = false;
-
+  
   shows: any[] = [];
   filteredShows: any[] = [];
+
+  searchSubject = new Subject<void>();
+
 
   selectedShow: any = null;
 
@@ -32,27 +37,31 @@ export class Shows implements OnInit {
   constructor(private showsService: ShowsService,private router: Router) {}
 
   ngOnInit() {
-    this.loadShows();
-  }
+  this.loadShows();
 
-  loadShows() {
+  this.searchSubject
+    .pipe(debounceTime(400))
+    .subscribe(() => {
+      this.currentPage = 1;
+      this.loadShows();
+    });
+}
+
+
+ loadShows() {
   this.showsService
-    .getShows(this.currentPage, this.itemsPerPage)
+    .getShows(
+      this.currentPage,
+      this.itemsPerPage,
+      this.searchText,
+      this.selectedType
+    )
     .subscribe({
       next: (res: any) => {
-        console.log("API RES:", res);
-
-        if (Array.isArray(res?.data)) {
-          this.shows = res.data;
-        } else {
-          console.error("Invalid shows data", res);
-          this.shows = [];
-        }
-
+        this.shows = res?.data || [];
         this.filteredShows = [...this.shows];
         this.totalPages = res?.totalPages || 1;
       },
-
       error: (err) => {
         console.error('Error fetching shows', err);
         this.shows = [];
@@ -63,34 +72,12 @@ export class Shows implements OnInit {
 }
 
 
-  applyFilters() {
-  if (!Array.isArray(this.shows)) {
-    console.warn("Shows not ready yet");
-    this.filteredShows = [];
-    return;
-  }
-
-  const search = this.searchText.trim().toLowerCase();
-
-  this.filteredShows = this.shows.filter(show => {
-    const matchesTitle =
-      !search || show.title?.toLowerCase().includes(search);
-
-    const matchesCast =
-      !search || show.cast?.toLowerCase().includes(search);
-
-    const matchesType =
-      !this.selectedType || show.type === this.selectedType;
-
-    return (matchesTitle || matchesCast) && matchesType;
-  });
-
-  this.currentPage = 1;
-  this.hasInteracted = true;
+applyFilters() {
+  this.searchSubject.next();
 }
 
 
- nextPage() {
+nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
       this.loadShows();
@@ -104,8 +91,7 @@ export class Shows implements OnInit {
     }
   }
 
-
-
+  
   logout() {
     removeToken();
   this.router.navigate(['/login']);

@@ -16,6 +16,7 @@
         [(ngModel)]="selectedType"
         (ngModelChange)="applyFilters()"
       >
+        <option value="All">All</option>
         <option value="Movie">Movies</option>
         <option value="TV Show">TV Shows</option>
       </select>
@@ -35,12 +36,7 @@
 
   <!-- GRID -->
   <div class="grid">
-    <div
-      class="card"
-      *ngFor="let show of filteredShows"
-
-      (click)="openDetails(show)"
-    >
+    <div class="card" *ngFor="let show of filteredShows" (click)="openDetails(show)">
       <div class="card-accent"></div>
 
       <h3>{{ show.title }}</h3>

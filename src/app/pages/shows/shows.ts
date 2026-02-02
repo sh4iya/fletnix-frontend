@@ -24,7 +24,8 @@ export class Shows implements OnInit {
   shows: any[] = [];
   filteredShows: any[] = [];
 
-  searchSubject = new Subject<void>();
+  private searchSubject = new Subject<void>();
+
 
 
   selectedShow: any = null;
@@ -36,9 +37,12 @@ export class Shows implements OnInit {
 
   constructor(private showsService: ShowsService,private router: Router) {}
 
-  ngOnInit() {
-  this.loadShows();
+ ngOnInit() {
+  this.setupSearchStream();   // debounce setup
+  this.loadShows();           // initial load
+}
 
+setupSearchStream() {
   this.searchSubject
     .pipe(debounceTime(400))
     .subscribe(() => {
@@ -48,7 +52,7 @@ export class Shows implements OnInit {
 }
 
 
- loadShows() {
+loadShows() {
   this.showsService
     .getShows(
       this.currentPage,
@@ -58,18 +62,16 @@ export class Shows implements OnInit {
     )
     .subscribe({
       next: (res: any) => {
-        this.shows = res?.data || [];
-        this.filteredShows = [...this.shows];
-        this.totalPages = res?.totalPages || 1;
+        this.shows = res.data || [];
+        this.filteredShows = this.shows;   
+        this.totalPages = res.totalPages || 1;
       },
-      error: (err) => {
-        console.error('Error fetching shows', err);
-        this.shows = [];
+      error: () => {
         this.filteredShows = [];
-        this.totalPages = 1;
       }
     });
 }
+
 
 
 applyFilters() {

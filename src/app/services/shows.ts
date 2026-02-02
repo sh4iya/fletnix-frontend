@@ -9,17 +9,14 @@ export class ShowsService {
 
   constructor(private http: HttpClient) {}
 
-  getShows(
-  page: number,
-  limit: number,
-  search: string = '',
-  type: string = ''
-) {
-  return this.http.get<any>(
-    `${this.API}?page=${page}&limit=${limit}&search=${search}&type=${type}`
-  );
-}
+  getShows(page: number, limit: number, search: string, type: string) {
+  let url = `${this.API}?page=${page}&limit=${limit}`;
 
+  if (search) url += `&search=${search}`;
+  if (type && type !== 'All') url += `&type=${type}`;
+
+  return this.http.get<any>(url);
+}
 
 }
 

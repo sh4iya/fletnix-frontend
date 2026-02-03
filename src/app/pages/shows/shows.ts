@@ -34,7 +34,7 @@ export class Shows implements OnInit {
   currentPage = 1;
   itemsPerPage = 15;
   totalPages = 0;
-Array: any;
+
 
   constructor(private showsService: ShowsService,private router: Router) {}
 
@@ -129,6 +129,13 @@ nextPage() {
   } catch {
     return null;
   }
+}
+
+formatCast(cast: any): string {
+  if (Array.isArray(cast)) {
+    return cast.join(', ');
+  }
+  return cast || '';
 }
 
   isLocked(show: any): boolean {

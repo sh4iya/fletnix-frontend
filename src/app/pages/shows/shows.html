@@ -36,19 +36,22 @@
 
 
   <!-- GRID -->
-  <div class="grid">
-    <div class="card" *ngFor="let show of filteredShows" (click)="openDetails(show)">
-      <div class="card-accent"></div>
+  <div class="card" *ngFor="let show of filteredShows" (click)="openDetails(show)">
+  <div class="card-accent"></div>
 
-     <h3>{{ show.title || show.name || show.show_id }}</h3>
+  <h3>{{ show?.title || show?.name || 'No Title' }}</h3>
 
-      <p>{{ show.desc }}</p>
-      <p class="cast">{{ Array.isArray(show.cast) ? show.cast.join(', ') : show.cast }}</p>
-      <span class="badge">{{ show.type }}</span>
-    </div>
-  </div>
+  <p>{{ show?.desc || show?.description || '' }}</p>
 
+  <!-- cast safe render -->
+  <p class="cast">
+   {{ formatCast(show?.cast) }}
+
+  </p>
+
+  <span class="badge">{{ show?.type || '' }}</span>
 </div>
+
 
 <div class="pagination" *ngIf="totalPages > 1">
   <button (click)="prevPage()" [disabled]="currentPage === 1">
@@ -74,7 +77,11 @@
   <p><b>Country:</b> {{ selectedShow.country }}</p>
   <p><b>Release Year:</b> {{ selectedShow.release_year }}</p>
   <p><b>Rating:</b> {{ selectedShow.rating }}</p>
-  <p><b>Cast:</b> {{ selectedShow.cast }}</p>
+ <p><b>Cast:</b>
+  {{ formatCast(selectedShow?.cast) }}
+
+</p>
+
   <p><b>Duration:</b> {{ selectedShow.duration }}</p>
   <p><b>Genre:</b> {{ selectedShow.listed_in }}</p>
   <p class="desc">{{ selectedShow.description }}</p>

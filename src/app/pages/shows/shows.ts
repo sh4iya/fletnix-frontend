@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { getToken, removeToken } from '../../services/storage.util';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 
 @Component({
@@ -24,7 +24,7 @@ export class Shows implements OnInit {
   shows: any[] = [];
   filteredShows: any[] = [];
 
-  private searchSubject = new Subject<void>();
+  private searchSubject = new Subject<string>();
 
 
 
@@ -34,31 +34,23 @@ export class Shows implements OnInit {
   currentPage = 1;
   itemsPerPage = 15;
   totalPages = 0;
+Array: any;
 
   constructor(private showsService: ShowsService,private router: Router) {}
 
  ngOnInit() {
-
   this.searchSubject
-    .pipe(debounceTime(400))
+    .pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    )
     .subscribe(() => {
-      this.currentPage = 1;
       this.loadShows();
     });
 
-  //initial load trigger
-  this.searchSubject.next();
+  this.searchSubject.next(''); // initial load
 }
 
-
-setupSearchStream() {
-  this.searchSubject
-    .pipe(debounceTime(400))
-    .subscribe(() => {
-      this.currentPage = 1;
-      this.loadShows();
-    });
-}
 
 
 loadShows() {
@@ -72,8 +64,14 @@ loadShows() {
     .subscribe({
       next: (res: any) => {
         this.shows = res.data || [];
-        this.filteredShows = this.shows;
+
+        //  always update filtered list
+        this.filteredShows = [...this.shows];
+
         this.totalPages = res.totalPages || 1;
+
+        // mark interacted so empty state hides
+        this.hasInteracted = true;
       },
       error: () => {
         this.filteredShows = [];
@@ -82,10 +80,11 @@ loadShows() {
     });
 }
 
-applyFilters() {
-  this.searchSubject.next();
-}
 
+applyFilters() {
+  this.currentPage = 1;
+  this.searchSubject.next(this.searchText + '|' + this.selectedType);
+}
 
 
 nextPage() {

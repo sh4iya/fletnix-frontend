@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { ShowsService } from '../../services/shows';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,7 +21,7 @@ export class Shows implements OnInit {
   shows: any[] = [];
   filteredShows: any[] = [];
   selectedShow: any = null;
-
+  cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   currentPage = 1;
   itemsPerPage = 15;
   totalPages = 1;
@@ -58,6 +58,8 @@ export class Shows implements OnInit {
           this.shows = res.data || [];
           this.filteredShows = [...this.shows];
           this.totalPages = res.totalPages || 1;
+          this.cdr.markForCheck();
+
         },
         error: () => {
           this.filteredShows = [];

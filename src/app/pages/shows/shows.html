@@ -14,7 +14,7 @@
 
       <select
         [(ngModel)]="selectedType"
-        (ngModelChange)="applyFilters()"
+        (change)="applyFilters()"
       >
         <option value="All">All</option>
         <option value="Movie">Movies</option>
@@ -39,7 +39,7 @@
     <div class="card" *ngFor="let show of filteredShows" (click)="openDetails(show)">
       <div class="card-accent"></div>
 
-      <h3>{{ show.title }}</h3>
+      <h3>{{ show.title || show.name }}</h3>
       <p>{{ show.desc }}</p>
       <p class="cast">{{ show.cast }}</p>
       <span class="badge">{{ show.type }}</span>

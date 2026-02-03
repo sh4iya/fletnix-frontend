@@ -38,9 +38,18 @@ export class Shows implements OnInit {
   constructor(private showsService: ShowsService,private router: Router) {}
 
  ngOnInit() {
-  this.setupSearchStream();   // debounce setup
-  this.loadShows();           // initial load
+
+  this.searchSubject
+    .pipe(debounceTime(400))
+    .subscribe(() => {
+      this.currentPage = 1;
+      this.loadShows();
+    });
+
+  //initial load trigger
+  this.searchSubject.next();
 }
+
 
 setupSearchStream() {
   this.searchSubject
@@ -63,20 +72,20 @@ loadShows() {
     .subscribe({
       next: (res: any) => {
         this.shows = res.data || [];
-        this.filteredShows = this.shows;   
+        this.filteredShows = this.shows;
         this.totalPages = res.totalPages || 1;
       },
       error: () => {
         this.filteredShows = [];
+        this.totalPages = 1;
       }
     });
 }
 
-
-
 applyFilters() {
   this.searchSubject.next();
 }
+
 
 
 nextPage() {

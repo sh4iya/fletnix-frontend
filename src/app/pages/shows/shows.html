@@ -14,9 +14,7 @@
 
       <select
         [(ngModel)]="selectedType"
-        (ngModelChange)="applyFilters()"
-
-      >
+        (change)="applyFilters()">
         <option value="All">All</option>
         <option value="Movie">Movies</option>
         <option value="TV Show">TV Shows</option>
@@ -26,33 +24,32 @@
     <button class="logout-btn" (click)="logout()">Logout</button>
   </header>
 
-  <div
-  class="empty-state"
-  *ngIf="filteredShows.length === 0 && !hasInteracted"
->
-  <h2>🎬 Discover something to watch</h2>
-  <p>Start typing or select a category to see movies & TV shows.</p>
+  <!-- GRID WRAPPER (YOU WERE MISSING THIS) -->
+  <div class="grid">
+
+    <div class="card"
+         *ngFor="let show of filteredShows"
+         (click)="openDetails(show)">
+
+      <div class="card-accent"></div>
+
+      <!-- safe title -->
+      <h3>{{ show.title || show.name || 'Untitled' }}</h3>
+
+      <p>{{ show.description }}</p>
+
+      <!-- cast -->
+      <p class="cast">{{ show.cast }}</p>
+
+      <span class="badge">{{ show.type }}</span>
+
+    </div>
+
+  </div>
+
 </div>
 
-
-  <!-- GRID -->
-  <div class="card" *ngFor="let show of filteredShows" (click)="openDetails(show)">
-  <div class="card-accent"></div>
-
-  <h3>{{ show?.title || show?.name || 'No Title' }}</h3>
-
-  <p>{{ show?.desc || show?.description || '' }}</p>
-
-  <!-- cast safe render -->
-  <p class="cast">
-   {{ formatCast(show?.cast) }}
-
-  </p>
-
-  <span class="badge">{{ show?.type || '' }}</span>
-</div>
-
-
+<!-- PAGINATION -->
 <div class="pagination" *ngIf="totalPages > 1">
   <button (click)="prevPage()" [disabled]="currentPage === 1">
     ⬅ Prev
@@ -65,7 +62,6 @@
   </button>
 </div>
 
-
 <!-- DETAILS MODAL -->
 <div class="overlay" *ngIf="selectedShow" (click)="closeDetails()"></div>
 
@@ -75,15 +71,9 @@
   <p><b>Type:</b> {{ selectedShow.type }}</p>
   <p><b>Director:</b> {{ selectedShow.director || 'N/A' }}</p>
   <p><b>Country:</b> {{ selectedShow.country }}</p>
-  <p><b>Release Year:</b> {{ selectedShow.release_year }}</p>
+  <p><b>Year:</b> {{ selectedShow.release_year }}</p>
   <p><b>Rating:</b> {{ selectedShow.rating }}</p>
- <p><b>Cast:</b>
-  {{ formatCast(selectedShow?.cast) }}
-
-</p>
-
-  <p><b>Duration:</b> {{ selectedShow.duration }}</p>
-  <p><b>Genre:</b> {{ selectedShow.listed_in }}</p>
+  <p><b>Cast:</b> {{ selectedShow.cast }}</p>
   <p class="desc">{{ selectedShow.description }}</p>
 
   <button (click)="closeDetails()">Close</button>

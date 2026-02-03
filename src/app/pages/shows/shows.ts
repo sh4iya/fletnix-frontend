@@ -5,8 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { getToken, removeToken } from '../../services/storage.util';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-shows',
@@ -19,75 +18,59 @@ export class Shows implements OnInit {
 
   searchText = '';
   selectedType = 'All';
-  hasInteracted = false;
-  
   shows: any[] = [];
   filteredShows: any[] = [];
-
-  private searchSubject = new Subject<string>();
-
-
-
   selectedShow: any = null;
 
-  // Pagination
   currentPage = 1;
   itemsPerPage = 15;
-  totalPages = 0;
+  totalPages = 1;
 
+  private searchSubject = new Subject<void>();
 
-  constructor(private showsService: ShowsService,private router: Router) {}
+  constructor(
+    private showsService: ShowsService,
+    private router: Router
+  ) {}
 
- ngOnInit() {
-  this.searchSubject
-    .pipe(
-      debounceTime(400),
-      distinctUntilChanged()
-    )
-    .subscribe(() => {
-      this.loadShows();
-    });
+  ngOnInit() {
+    this.searchSubject
+      .pipe(debounceTime(400))
+      .subscribe(() => {
+        this.currentPage = 1;
+        this.loadShows();
+      });
 
-  this.searchSubject.next(''); // initial load
-}
+    // initial load
+    this.searchSubject.next();
+  }
 
+  loadShows() {
+    this.showsService
+      .getShows(
+        this.currentPage,
+        this.itemsPerPage,
+        this.searchText,
+        this.selectedType
+      )
+      .subscribe({
+        next: (res: any) => {
+          this.shows = res.data || [];
+          this.filteredShows = [...this.shows];
+          this.totalPages = res.totalPages || 1;
+        },
+        error: () => {
+          this.filteredShows = [];
+          this.totalPages = 1;
+        }
+      });
+  }
 
+  applyFilters() {
+    this.searchSubject.next();
+  }
 
-loadShows() {
-  this.showsService
-    .getShows(
-      this.currentPage,
-      this.itemsPerPage,
-      this.searchText,
-      this.selectedType
-    )
-    .subscribe({
-      next: (res: any) => {
-        this.shows = res.data || [];
-
-        //  always update filtered list
-        this.filteredShows = [...this.shows];
-
-        this.totalPages = res.totalPages || 1;
-
-        // mark interacted so empty state hides
-        this.hasInteracted = true;
-      },
-      error: () => {
-        this.filteredShows = [];
-        this.totalPages = 1;
-      }
-    });
-}
-
-
-applyFilters() {
-  this.currentPage = 1;
-  this.searchSubject.next(this.searchText + '|' + this.selectedType);
-}
-
-
-nextPage() {
+  nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
       this.loadShows();
@@ -101,15 +84,14 @@ nextPage() {
     }
   }
 
-  
   logout() {
     removeToken();
-  this.router.navigate(['/login']);
+    this.router.navigate(['/login']);
   }
 
   openDetails(show: any) {
     if (this.isLocked(show)) {
-      alert('🔞 This content is restricted to users below 18');
+      alert('🔞 Restricted for under 18');
       return;
     }
     this.selectedShow = show;
@@ -122,21 +104,13 @@ nextPage() {
   getUserAge(): number | null {
     const token = getToken();
     if (!token) return null;
-
     try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.age ?? null;
-  } catch {
-    return null;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.age ?? null;
+    } catch {
+      return null;
+    }
   }
-}
-
-formatCast(cast: any): string {
-  if (Array.isArray(cast)) {
-    return cast.join(', ');
-  }
-  return cast || '';
-}
 
   isLocked(show: any): boolean {
     const age = this.getUserAge();
